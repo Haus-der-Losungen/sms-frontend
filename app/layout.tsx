@@ -4,9 +4,13 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Fidif School Complex',
+  description: 'Comprehensive school management system for Fidif School Complex. Manage students, staff, attendance, assessments, and more.',
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/School Logo - Header.png",
+    apple: "/apple-touch-icon.png",
+  },
 }
 
 export default function RootLayout({
