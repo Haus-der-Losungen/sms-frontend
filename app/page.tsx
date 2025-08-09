@@ -61,20 +61,19 @@ export default function LandingPage() {
 
       {/* Carousel Section */}
       <section className="w-full relative overflow-hidden bg-white pt-20">
-        <div className="w-full h-[500px] relative">
+        <div className="w-full h-[50vh] sm:h-[60vh] md:h-[500px] relative">
           <img
-            src={carouselData[index].src}
-            alt={carouselData[index].alt}
-            className="w-full h-full object-cover transition-all duration-700"
-          />
-
+             src={carouselData[index].src}
+             alt={carouselData[index].alt}
+             className="w-full h-full object-cover transition-all duration-700"
+           />
           {/* Black overlay */}
           <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
 
           {/* Content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 z-20">
-            <h2 className="text-2xl font-bold">{carouselData[index].title}</h2>
-            <p className="text-5xl font-bold text-white bg-[#560015] py-2 rounded px-6 bg-opacity-80 mt-2">
+            <h2 className="text- md:text-2xl font-bold">{carouselData[index].title}</h2>
+            <p className="text-2xl md:text-5xl font-bold text-white bg-[#560015] py-2 rounded px-6 bg-opacity-80 mt-2">
               {carouselData[index].subtitle}
             </p>
           </div>
@@ -96,7 +95,9 @@ export default function LandingPage() {
       </section>
 
       {/* Value Cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 w-full min-h-[300px] z-10 relative">
+        <section className="grid grid-cols-1 md:grid-cols-3 w-full min-h-[300px]">
+
+
         {[{
           icon: <BookOpen className="h-10 w-10 text-white mb-2" />,
           title: "Spiritual Development",
@@ -125,7 +126,7 @@ export default function LandingPage() {
       </section>
 
       {/* Who Are We Section */}
-      <section className="mt-20 max-w-3xl mx-auto text-black space-y-12 text-left">
+      <section className="p-8 md:mt-20 max-w-3xl mx-auto text-black space-y-12 text-left">
         <div>
           <h2 className="text-3xl md:text-4xl font-extrabold mb-2">Who Are We?</h2>
           <p className="text-base md:text-lg mb-4">
