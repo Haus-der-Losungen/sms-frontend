@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 
-import { useState } from "react"
+// import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -79,7 +79,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Directory</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -349,4 +349,3 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     </SidebarProvider>
   )
 }
-6b9b6bb5f4ab14430fcebb79a024b19a2274d1e7

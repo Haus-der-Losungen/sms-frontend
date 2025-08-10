@@ -2,10 +2,11 @@
 
 import { cookies } from "next/headers"
 import { SignJWT, jwtVerify } from "jose"
+import { redirect } from "next/navigation"
 
 const secret = new TextEncoder().encode("your-secret-key-for-demo")
 
-// Mock user data (replacing database)
+// Mock user data (replace with database in production)
 const mockUsers = [
   {
     id: 1,
@@ -43,8 +44,9 @@ const mockUsers = [
 
 export async function login(pin: string, password: string, role: string) {
   try {
-    // Find user with matching PIN, password, and role
-    const user = mockUsers.find((u) => u.pin === pin && u.password === password && u.role === role)
+    const user = mockUsers.find(
+      (u) => u.pin === pin && u.password === password && u.role === role
+    )
 
     if (!user) {
       return { success: false, error: "Invalid credentials" }
@@ -62,12 +64,18 @@ export async function login(pin: string, password: string, role: string) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24, // 24 hours
+      maxAge: 60 * 60 * 24,
     })
 
     return {
       success: true,
-      user: { id: user.id, pin: user.pin, full_name: user.full_name, email: user.email, role: user.role },
+      user: {
+        id: user.id,
+        pin: user.pin,
+        full_name: user.full_name,
+        email: user.email,
+        role: user.role,
+      },
     }
   } catch (error) {
     console.error("Login error:", error)
@@ -78,6 +86,7 @@ export async function login(pin: string, password: string, role: string) {
 export async function logout() {
   const cookieStore = await cookies()
   cookieStore.delete("auth-token")
+  redirect("/login")
 }
 
 export async function getUser() {
@@ -85,16 +94,12 @@ export async function getUser() {
     const cookieStore = await cookies()
     const token = cookieStore.get("auth-token")?.value
 
-    if (!token) {
-      return null
-    }
+    if (!token) return null
 
     const { payload } = await jwtVerify(token, secret)
     const user = mockUsers.find((u) => u.id === payload.userId)
 
-    if (!user) {
-      return null
-    }
+    if (!user) return null
 
     return {
       id: user.id,
@@ -103,7 +108,7 @@ export async function getUser() {
       email: user.email,
       role: user.role,
     }
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -111,10 +116,7 @@ export async function getUser() {
 export async function requireAuth(allowedRoles?: string[]) {
   const user = await getUser()
 
-  if (!user) {
-    throw new Error("Authentication required")
-  }
-
+  if (!user) throw new Error("Authentication required")
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     throw new Error("Insufficient permissions")
   }

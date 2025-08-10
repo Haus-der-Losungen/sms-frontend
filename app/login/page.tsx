@@ -32,7 +32,7 @@ export default function LoginPage() {
       if (result.success) {
         // Redirect based on role
         switch (role) {
-          case "admin":
+          // case "admin":
           case "super_admin":
             router.push("/admin")
             break
@@ -88,8 +88,8 @@ export default function LoginPage() {
                   <SelectContent>
                     <SelectItem value="student">Student</SelectItem>
                     <SelectItem value="staff">Staff</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                    {/* <SelectItem value="admin">Admin</SelectItem> */}
+                    <SelectItem value="super_admin"> Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
