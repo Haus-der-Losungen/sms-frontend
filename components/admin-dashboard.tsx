@@ -26,7 +26,7 @@ import { logout } from "@/lib/auth"
 
 interface User {
   id: number
-  userID: string
+  userID: number
   full_name: string
   email?: string
   role: string
