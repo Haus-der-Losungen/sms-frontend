@@ -15,7 +15,7 @@ import { login } from "@/lib/auth"
 
 export default function LoginPage() {
   const [userID, setUserdID] = useState("")
-  const [password, setPassword] = useState("")
+  const [pin, setPin] = useState("")
   const [role, setRole] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -27,7 +27,7 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const result = await login(userID, password, role)
+      const result = await login(userID, pin, role)
 
       if (result.success) {
         // Redirect based on role
@@ -108,13 +108,13 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="pin">Pin</Label>
                 <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="pin"
+                  type="pin"
+                  placeholder="Enter your pin"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
                   className="border-pink-200 focus:border-pink-500"
                   required
                 />

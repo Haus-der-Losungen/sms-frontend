@@ -41,7 +41,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [newUserData, setNewUserData] = useState({
     userId: "",
-    password: "",
+    pin: "",
     full_name: "",
     email: "",
     role: "",
@@ -59,7 +59,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     // Reset form
     setNewUserData({
       userId: "",
-      password: "",
+      pin: "",
       full_name: "",
       email: "",
       role: "",
@@ -266,10 +266,10 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                     <div className="space-y-2">
                       <Label htmlFor="password">Password</Label>
                       <Input
-                        id="password"
-                        type="password"
-                        value={newUserData.password}
-                        onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
+                        id="pin"
+                        type="pin"
+                        value={newUserData.pin}
+                        onChange={(e) => setNewUserData({ ...newUserData, pin: e.target.value })}
                         className="border-pink-200 focus:border-pink-500"
                         required
                       />
