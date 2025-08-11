@@ -14,7 +14,7 @@ import { GraduationCap, ArrowLeft, Loader2 } from "lucide-react"
 import { login } from "@/lib/auth"
 
 export default function LoginPage() {
-  const [pin, setPin] = useState("")
+  const [userID, setUserdID] = useState("")
   const [password, setPassword] = useState("")
   const [role, setRole] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -27,7 +27,7 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const result = await login(pin, password, role)
+      const result = await login(userID, password, role)
 
       if (result.success) {
         // Redirect based on role
@@ -95,13 +95,13 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pin">PIN</Label>
+                <Label htmlFor="userId">UserId</Label>
                 <Input
-                  id="pin"
+                  id="userId"
                   type="text"
-                  placeholder="Enter your PIN"
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value)}
+                  placeholder="Enter your UserId"
+                  value={userID}
+                  onChange={(e) => setUserdID(e.target.value)}
                   className="border-pink-200 focus:border-pink-500"
                   required
                 />

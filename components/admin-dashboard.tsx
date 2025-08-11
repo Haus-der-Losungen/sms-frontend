@@ -26,7 +26,7 @@ import { logout } from "@/lib/auth"
 
 interface User {
   id: number
-  pin: string
+  userID: string
   full_name: string
   email?: string
   role: string
@@ -40,7 +40,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
   const [activeView, setActiveView] = useState("dashboard")
   const [searchTerm, setSearchTerm] = useState("")
   const [newUserData, setNewUserData] = useState({
-    pin: "",
+    userId: "",
     password: "",
     full_name: "",
     email: "",
@@ -58,7 +58,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     console.log("Creating user:", newUserData)
     // Reset form
     setNewUserData({
-      pin: "",
+      userId: "",
       password: "",
       full_name: "",
       email: "",
@@ -254,11 +254,11 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                 <form onSubmit={handleCreateUser} className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="pin">PIN</Label>
+                      <Label htmlFor="userID">UserId</Label>
                       <Input
                         id="pin"
-                        value={newUserData.pin}
-                        onChange={(e) => setNewUserData({ ...newUserData, pin: e.target.value })}
+                        value={newUserData.userId}
+                        onChange={(e) => setNewUserData({ ...newUserData, userId: e.target.value })}
                         className="border-pink-200 focus:border-pink-500"
                         required
                       />
