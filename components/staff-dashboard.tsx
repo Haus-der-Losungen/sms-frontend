@@ -43,12 +43,16 @@ interface StaffDashboardProps {
 }
 
 interface WeekData {
-  saved: boolean
   [studentName: string]: boolean[] | boolean
+  saved: boolean
+}
+
+interface ClassAttendance {
+  [weekKey: string]: WeekData
 }
 
 interface WeeklyAttendance {
-  [weekKey: string]: WeekData
+  [classKey: string]: ClassAttendance
 }
 
 interface AssessmentConfig {
@@ -73,63 +77,239 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     exam: 60,
   })
 
-  // Mock attendance data - in real app, this would come from API
+  // Mock attendance data - now organized by class, then by week
   const [weeklyAttendance, setWeeklyAttendance] = useState<WeeklyAttendance>({
-    "week-1": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
+    "class-1a": {
+      "week-1": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-2": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-3": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-4": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-5": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-6": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-7": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-8": {
+        "Alice Johnson": [false, false, false, false, false],
+        "Bob Smith": [false, false, false, false, false],
+        "Carol Davis": [false, false, false, false, false],
+        "David Wilson": [false, false, false, false, false],
+        saved: false,
+      },
     },
-    "week-2": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
+    "class-1b": {
+      "week-1": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-2": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-3": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-4": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-5": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-6": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-7": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-8": {
+        "Emma Brown": [false, false, false, false, false],
+        "Frank Miller": [false, false, false, false, false],
+        "Grace Taylor": [false, false, false, false, false],
+        "Henry Clark": [false, false, false, false, false],
+        saved: false,
+      },
     },
-    "week-3": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
+    "class-2a": {
+      "week-1": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-2": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-3": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-4": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-5": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-6": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-7": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-8": {
+        "John Doe": [false, false, false, false, false],
+        "Jane Smith": [false, false, false, false, false],
+        "Mike Johnson": [false, false, false, false, false],
+        "Sarah Wilson": [false, false, false, false, false],
+        saved: false,
+      },
     },
-    "week-4": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
-    },
-    "week-5": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
-    },
-    "week-6": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
-    },
-    "week-7": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
-    },
-    "week-8": {
-      "John Doe": [false, false, false, false, false],
-      "Jane Smith": [false, false, false, false, false],
-      "Mike Johnson": [false, false, false, false, false],
-      "Sarah Wilson": [false, false, false, false, false],
-      saved: false,
+    "class-2b": {
+      "week-1": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-2": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-3": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-4": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-5": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-6": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-7": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
+      "week-8": {
+        "Lisa Anderson": [false, false, false, false, false],
+        "Mark Thompson": [false, false, false, false, false],
+        "Nina Rodriguez": [false, false, false, false, false],
+        "Oscar Lee": [false, false, false, false, false],
+        saved: false,
+      },
     },
   })
 
@@ -147,7 +327,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     {
       id: 1,
       name: "John Doe",
-      pin: "STU001",
+      // pin: "STU001",
       class: "Class 2A",
       average: 85,
       grade: "B+",
@@ -160,7 +340,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     {
       id: 2,
       name: "Jane Smith",
-      pin: "STU002",
+      // pin: "STU002",
       class: "Class 2A",
       average: 92,
       grade: "A-",
@@ -173,7 +353,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     {
       id: 3,
       name: "Mike Johnson",
-      pin: "STU003",
+      // pin: "STU003",
       class: "Class 2A",
       average: 78,
       grade: "B",
@@ -186,7 +366,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     {
       id: 4,
       name: "Sarah Wilson",
-      pin: "STU004",
+      // pin: "STU004",
       class: "Class 2A",
       average: 88,
       grade: "B+",
@@ -205,12 +385,18 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
 
   const handleAttendanceChange = (studentName: string, dayIndex: number, checked: boolean) => {
     // Validate inputs
-    if (!selectedWeek || !studentName || dayIndex < 0 || dayIndex > 4) {
+    if (!selectedWeek || !selectedClass || !studentName || dayIndex < 0 || dayIndex > 4) {
       console.error("Invalid attendance change parameters")
       return
     }
 
-    const weekData = weeklyAttendance[selectedWeek]
+    const classData = weeklyAttendance[selectedClass]
+    if (!classData) {
+      console.error("Class data not found")
+      return
+    }
+
+    const weekData = classData[selectedWeek]
     if (!weekData) {
       console.error("Week data not found")
       return
@@ -224,15 +410,18 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     try {
       setWeeklyAttendance((prev) => ({
         ...prev,
-        [selectedWeek]: {
-          ...prev[selectedWeek],
-          [studentName]:
-            Array.isArray(prev[selectedWeek][studentName])
-              ? (prev[selectedWeek][studentName] as boolean[]).map((attendance, index) =>
-                  index === dayIndex ? checked : attendance,
-                )
-              : [false, false, false, false, false], // fallback array
-        } as WeekData,
+        [selectedClass]: {
+          ...prev[selectedClass],
+          [selectedWeek]: {
+            ...prev[selectedClass][selectedWeek],
+            [studentName]:
+              Array.isArray(prev[selectedClass][selectedWeek][studentName])
+                ? (prev[selectedClass][selectedWeek][studentName] as boolean[]).map((attendance, index) =>
+                    index === dayIndex ? checked : attendance,
+                  )
+                : [false, false, false, false, false], // fallback array
+          } as WeekData,
+        },
       }))
     } catch (error) {
       console.error("Error updating attendance:", error)
@@ -247,14 +436,20 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
       return
     }
 
+    // Check if the class data exists
+    if (!weeklyAttendance[selectedClass]) {
+      alert("No attendance data found for the selected class.")
+      return
+    }
+
     // Check if the week data exists
-    if (!weeklyAttendance[selectedWeek]) {
+    if (!weeklyAttendance[selectedClass][selectedWeek]) {
       alert("No attendance data found for the selected week.")
       return
     }
 
     // Check if already saved
-    if (weeklyAttendance[selectedWeek].saved) {
+    if (weeklyAttendance[selectedClass][selectedWeek].saved) {
       alert("This week's attendance has already been saved and locked.")
       return
     }
@@ -262,12 +457,15 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
     try {
       setWeeklyAttendance((prev) => ({
         ...prev,
-        [selectedWeek]: {
-          ...prev[selectedWeek],
-          saved: true,
-        } as WeekData,
+        [selectedClass]: {
+          ...prev[selectedClass],
+          [selectedWeek]: {
+            ...prev[selectedClass][selectedWeek],
+            saved: true,
+          } as WeekData,
+        },
       }))
-      alert(`Attendance for ${selectedWeek} saved successfully! This week is now locked.`)
+      alert(`Attendance for ${selectedClass} - ${selectedWeek} saved successfully! This week is now locked.`)
     } catch (error) {
       console.error("Error saving attendance:", error)
       alert("An error occurred while saving attendance. Please try again.")
@@ -305,7 +503,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>Directory</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -381,10 +579,10 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
                     <Label className="text-sm font-medium text-gray-700">Full Name</Label>
                     <p className="text-lg font-semibold text-pink-900">{user.full_name}</p>
                   </div>
-                  <div>
+                  {/* <div>
                     <Label className="text-sm font-medium text-gray-700">Staff PIN</Label>
                     <p className="text-lg font-semibold text-pink-900">{user.pin}</p>
-                  </div>
+                  </div> */}
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-700">Email</Label>
@@ -442,11 +640,14 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
                 <CardTitle className="text-pink-900">Weekly Attendance Grid</CardTitle>
                 <CardDescription>
                   Mark attendance for {selectedClass} - {selectedWeek}
-                  {weeklyAttendance[selectedWeek]?.saved && " (Locked - This week has been saved)"}
+                  {selectedClass &&
+                    selectedWeek &&
+                    weeklyAttendance[selectedClass]?.[selectedWeek]?.saved &&
+                    " (Locked - This week has been saved)"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {selectedClass && selectedWeek ? (
+                {selectedClass && selectedWeek && weeklyAttendance[selectedClass]?.[selectedWeek] ? (
                   <div className="space-y-4">
                     <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-700">
                       <div className="font-semibold">Student</div>
@@ -467,35 +668,36 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
                       </div>
                     </div>
 
-                    {/* Sample students */}
-                    {Object.keys(weeklyAttendance[selectedWeek] || {})
+                    {/* Students for the selected class */}
+                    {Object.keys(weeklyAttendance[selectedClass][selectedWeek] || {})
                       .filter((key) => key !== "saved")
                       .map((studentName, index) => (
                         <div key={index} className="grid grid-cols-6 gap-4 items-center py-3 border-b border-pink-100">
                           <div className="font-medium text-pink-900">{studentName}</div>
-                          {(weeklyAttendance[selectedWeek][studentName] as boolean[]).map(
-                            (isPresent: boolean, dayIndex: number) => (
-                              <div key={dayIndex} className="flex justify-center">
-                                <Checkbox
-                                  checked={isPresent}
-                                  onCheckedChange={(checked) =>
-                                    handleAttendanceChange(studentName, dayIndex, checked as boolean)
-                                  }
-                                  className="border-pink-300 data-[state=checked]:bg-pink-600 w-6 h-6"
-                                  disabled={weeklyAttendance[selectedWeek]?.saved}
-                                />
-                              </div>
-                            ),
-                          )}
+                          {Array.isArray(weeklyAttendance[selectedClass][selectedWeek][studentName]) &&
+                            (weeklyAttendance[selectedClass][selectedWeek][studentName] as boolean[]).map(
+                              (isPresent, dayIndex) => (
+                                <div key={dayIndex} className="flex justify-center">
+                                  <Checkbox
+                                    checked={isPresent}
+                                    onCheckedChange={(checked) =>
+                                      handleAttendanceChange(studentName, dayIndex, checked as boolean)
+                                    }
+                                    className="border-pink-300 data-[state=checked]:bg-pink-600 w-6 h-6"
+                                    disabled={weeklyAttendance[selectedClass][selectedWeek]?.saved}
+                                  />
+                                </div>
+                              ),
+                            )}
                         </div>
                       ))}
 
                     <Button
                       onClick={handleSaveAttendance}
                       className="bg-pink-600 hover:bg-pink-700 text-white mt-4"
-                      disabled={weeklyAttendance[selectedWeek]?.saved}
+                      disabled={weeklyAttendance[selectedClass][selectedWeek]?.saved}
                     >
-                      {weeklyAttendance[selectedWeek]?.saved ? "Attendance Saved" : "Save Attendance"}
+                      {weeklyAttendance[selectedClass][selectedWeek]?.saved ? "Attendance Saved" : "Save Attendance"}
                     </Button>
                   </div>
                 ) : (
@@ -744,7 +946,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
                 .filter(
                   (student) =>
                     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    student.pin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    // student.pin.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     student.class.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((student) => (
@@ -752,7 +954,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
                     <CardHeader>
                       <CardTitle className="text-pink-900">{student.name}</CardTitle>
                       <CardDescription>
-                        {student.class} • PIN: {student.pin}
+                        {/* {student.class} • PIN: {student.pin} */}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -791,7 +993,7 @@ export function StaffDashboard({ user }: StaffDashboardProps) {
                               </div>
                               <div>
                                 <Label className="text-sm font-medium text-gray-700">Student PIN</Label>
-                                <p className="text-lg font-semibold text-pink-900">{student.pin}</p>
+                                {/* <p className="text-lg font-semibold text-pink-900">{student.pin}</p> */}
                               </div>
                               <div>
                                 <Label className="text-sm font-medium text-gray-700">Class</Label>

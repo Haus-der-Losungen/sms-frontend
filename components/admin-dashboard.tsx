@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Users, GraduationCap, BookOpen, Settings, BarChart3, LogOut, Plus, Search, Edit } from "lucide-react"
+import { Users, GraduationCap, BookOpen, BarChart3, LogOut, Plus, Search, Edit } from "lucide-react"
 import { logout } from "@/lib/auth"
 
 interface AdminDashboardProps {
@@ -50,6 +50,12 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
   const [staffList, setStaffList] = useState([
     { id: 1, name: "John Teacher", pin: "STF001", email: "john@fidif.edu", role: "Teacher", class: "Class 1A" },
     { id: 2, name: "Jane Instructor", pin: "STF002", email: "jane@fidif.edu", role: "Teacher", class: "Class 2B" },
+    { id: 3, name: "Michael Brown", pin: "STF003", email: "michael@fidif.edu", role: "Teacher", class: "" },
+    { id: 4, name: "Sarah Davis", pin: "STF004", email: "sarah@fidif.edu", role: "Teacher", class: "" },
+    { id: 5, name: "Robert Wilson", pin: "STF005", email: "robert@fidif.edu", role: "Teacher", class: "" },
+    { id: 6, name: "Emily Johnson", pin: "STF006", email: "emily@fidif.edu", role: "Teacher", class: "" },
+    { id: 7, name: "David Martinez", pin: "STF007", email: "david@fidif.edu", role: "Admin", class: "" },
+    { id: 8, name: "Lisa Anderson", pin: "STF008", email: "lisa@fidif.edu", role: "Staff", class: "" },
   ])
 
   const [studentList, setStudentList] = useState([
@@ -71,7 +77,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
   const [newStaff, setNewStaff] = useState({
     name: "",
     email: "",
-    role: "teacher",
+    role: "Teacher",
     class: "",
   })
 
@@ -93,6 +99,10 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     description: "",
     teacher: "",
   })
+
+  // Editing states
+  const [editingClass, setEditingClass] = useState<any>(null)
+  const [editingSubject, setEditingSubject] = useState<any>(null)
 
   const handleLogout = async () => {
     await logout()
@@ -118,7 +128,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
       class: newStaff.class,
     }
     setStaffList([...staffList, staff])
-    setNewStaff({ name: "", email: "", role: "teacher", class: "" })
+    setNewStaff({ name: "", email: "", role: "Teacher", class: "" })
     alert(`Staff added successfully! PIN: ${pin}`)
   }
 
@@ -162,6 +172,52 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     alert("Subject added successfully!")
   }
 
+  const handleEditClass = (cls: any) => {
+    setEditingClass(cls)
+    setNewClass({
+      name: cls.name,
+      teacher: cls.teacher,
+      description: cls.description,
+    })
+  }
+
+  const handleUpdateClass = () => {
+    if (!editingClass) return
+
+    const updatedClasses = classList.map((cls) =>
+      cls.id === editingClass.id
+        ? { ...cls, name: newClass.name, teacher: newClass.teacher, description: newClass.description }
+        : cls,
+    )
+    setClassList(updatedClasses)
+    setEditingClass(null)
+    setNewClass({ name: "", teacher: "", description: "" })
+    alert("Class updated successfully!")
+  }
+
+  const handleEditSubject = (subject: any) => {
+    setEditingSubject(subject)
+    setNewSubject({
+      name: subject.name,
+      description: subject.description,
+      teacher: subject.teacher,
+    })
+  }
+
+  const handleUpdateSubject = () => {
+    if (!editingSubject) return
+
+    const updatedSubjects = subjectList.map((subject) =>
+      subject.id === editingSubject.id
+        ? { ...subject, name: newSubject.name, teacher: newSubject.teacher, description: newSubject.description }
+        : subject,
+    )
+    setSubjectList(updatedSubjects)
+    setEditingSubject(null)
+    setNewSubject({ name: "", description: "", teacher: "" })
+    alert("Subject updated successfully!")
+  }
+
   const AppSidebar = () => {
     const { isMobile, setOpenMobile } = useSidebar()
 
@@ -183,7 +239,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>Directory</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -220,12 +276,6 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                   <SidebarMenuButton onClick={() => onNav("subjects")} isActive={activeView === "subjects"}>
                     <BookOpen className="h-4 w-4" />
                     <span>Subject Management</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => onNav("settings")} isActive={activeView === "settings"}>
-                    <Settings className="h-4 w-4" />
-                    <span>System Settings</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
@@ -343,9 +393,9 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="teacher">Teacher</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="staff">Staff</SelectItem>
+                        <SelectItem value="Teacher">Teacher</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                        <SelectItem value="Staff">Staff</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -615,7 +665,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                         </SelectTrigger>
                         <SelectContent>
                           {staffList
-                            .filter((staff) => staff.role === "teacher")
+                            .filter((staff) => staff.role === "Teacher")
                             .map((teacher) => (
                               <SelectItem key={teacher.id} value={teacher.name}>
                                 {teacher.name}
@@ -658,12 +708,70 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                         <strong>Description:</strong> {cls.description}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      className="w-full mt-4 border-pink-200 text-pink-600 hover:bg-pink-50 bg-transparent"
-                    >
-                      Manage Class
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full mt-4 border-pink-200 text-pink-600 hover:bg-pink-50 bg-transparent"
+                          onClick={() => handleEditClass(cls)}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Manage Class
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Class</DialogTitle>
+                          <DialogDescription>Update class information and reassign teacher</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="edit-class-name">Class Name</Label>
+                            <Input
+                              id="edit-class-name"
+                              value={newClass.name}
+                              onChange={(e) => setNewClass({ ...newClass, name: e.target.value })}
+                              className="border-pink-200 focus:border-pink-500"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="edit-class-teacher">Assigned Teacher</Label>
+                            <Select
+                              value={newClass.teacher}
+                              onValueChange={(value) => setNewClass({ ...newClass, teacher: value })}
+                            >
+                              <SelectTrigger className="border-pink-200 focus:border-pink-500">
+                                <SelectValue placeholder="Select a teacher" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {staffList
+                                  .filter((staff) => staff.role === "Teacher")
+                                  .map((teacher) => (
+                                    <SelectItem key={teacher.id} value={teacher.name}>
+                                      {teacher.name}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="edit-class-description">Description</Label>
+                            <Textarea
+                              id="edit-class-description"
+                              value={newClass.description}
+                              onChange={(e) => setNewClass({ ...newClass, description: e.target.value })}
+                              className="border-pink-200 focus:border-pink-500"
+                            />
+                          </div>
+                          <Button
+                            onClick={handleUpdateClass}
+                            className="w-full bg-pink-600 hover:bg-pink-700 text-white"
+                          >
+                            Update Class
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </CardContent>
                 </Card>
               ))}
@@ -713,7 +821,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                         </SelectTrigger>
                         <SelectContent>
                           {staffList
-                            .filter((staff) => staff.role === "teacher")
+                            .filter((staff) => staff.role === "Teacher")
                             .map((teacher) => (
                               <SelectItem key={teacher.id} value={teacher.name}>
                                 {teacher.name}
@@ -753,57 +861,74 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                         <strong>Description:</strong> {subject.description}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      className="w-full mt-4 border-pink-200 text-pink-600 hover:bg-pink-50 bg-transparent"
-                    >
-                      Manage Subject
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full mt-4 border-pink-200 text-pink-600 hover:bg-pink-50 bg-transparent"
+                          onClick={() => handleEditSubject(subject)}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Manage Subject
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Subject</DialogTitle>
+                          <DialogDescription>Update subject information and reassign teacher</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="edit-subject-name">Subject Name</Label>
+                            <Input
+                              id="edit-subject-name"
+                              value={newSubject.name}
+                              onChange={(e) => setNewSubject({ ...newSubject, name: e.target.value })}
+                              className="border-pink-200 focus:border-pink-500"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="edit-subject-teacher">Assigned Teacher</Label>
+                            <Select
+                              value={newSubject.teacher}
+                              onValueChange={(value) => setNewSubject({ ...newSubject, teacher: value })}
+                            >
+                              <SelectTrigger className="border-pink-200 focus:border-pink-500">
+                                <SelectValue placeholder="Select a teacher" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {staffList
+                                  .filter((staff) => staff.role === "Teacher")
+                                  .map((teacher) => (
+                                    <SelectItem key={teacher.id} value={teacher.name}>
+                                      {teacher.name}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="edit-subject-description">Description</Label>
+                            <Textarea
+                              id="edit-subject-description"
+                              value={newSubject.description}
+                              onChange={(e) => setNewSubject({ ...newSubject, description: e.target.value })}
+                              className="border-pink-200 focus:border-pink-500"
+                            />
+                          </div>
+                          <Button
+                            onClick={handleUpdateSubject}
+                            className="w-full bg-pink-600 hover:bg-pink-700 text-white"
+                          >
+                            Update Subject
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          </div>
-        )
-
-      case "settings":
-        return (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-pink-900">System Settings</h1>
-              <p className="text-gray-600">Configure system preferences</p>
-            </div>
-
-            <Card className="border-pink-200 max-w-2xl">
-              <CardHeader>
-                <CardTitle className="text-pink-900">School Information</CardTitle>
-                <CardDescription>Basic school details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>School Name</Label>
-                  <Input value="Fidif School Complex" className="border-pink-200 focus:border-pink-500" readOnly />
-                </div>
-                <div>
-                  <Label>Academic Year</Label>
-                  <Input value="2024-2025" className="border-pink-200 focus:border-pink-500" />
-                </div>
-                <div>
-                  <Label>Current Term</Label>
-                  <Select defaultValue="first">
-                    <SelectTrigger className="border-pink-200 focus:border-pink-500">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="first">First Term</SelectItem>
-                      <SelectItem value="second">Second Term</SelectItem>
-                      <SelectItem value="third">Third Term</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button className="bg-pink-600 hover:bg-pink-700 text-white">Save Settings</Button>
-              </CardContent>
-            </Card>
           </div>
         )
 

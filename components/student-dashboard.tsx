@@ -328,10 +328,10 @@ export function StudentDashboard({ user }: StudentDashboardProps) {
                     <Label className="text-sm font-medium text-gray-700">Full Name</Label>
                     <p className="text-lg font-semibold text-pink-900">{user.full_name}</p>
                   </div>
-                  <div>
+                  {/* <div>
                     <Label className="text-sm font-medium text-gray-700">Student PIN</Label>
                     <p className="text-lg font-semibold text-pink-900">{user.pin}</p>
-                  </div>
+                  </div> */}
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-700">Email</Label>
