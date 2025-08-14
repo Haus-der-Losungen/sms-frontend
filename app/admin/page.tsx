@@ -9,5 +9,5 @@ export default async function AdminPage() {
     redirect("/login")
   }
 
-  return <AdminDashboard user={{ ...user, userID: user.id ?? "" }} />
+  return <AdminDashboard user={user} />
 }
