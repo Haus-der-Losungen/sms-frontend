@@ -61,37 +61,50 @@ export default function LandingPage() {
 
       {/* Carousel Section */}
       <section className="w-full relative overflow-hidden bg-white pt-20">
-        <div className="w-full h-[50vh] sm:h-[60vh] md:h-[500px] relative">
-          <img
-             src={carouselData[index].src}
-             alt={carouselData[index].alt}
-             className="w-full h-full object-cover transition-all duration-700"
-           />
-          {/* Black overlay */}
-          <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+      <div className="w-full h-[50vh] sm:h-[60vh] md:h-[500px] relative overflow-hidden">
+  {carouselData.map((item, i) => (
+    <div
+      key={i}
+      className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+        i === index ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      {/* Image as background layer */}
+      <img
+        src={item.src}
+        alt={item.alt}
+        className="w-full h-full object-cover"
+      />
 
-          {/* Content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 z-20">
-            <h2 className="text- md:text-2xl font-bold">{carouselData[index].title}</h2>
-            <p className="text-2xl md:text-5xl font-bold text-white bg-[#560015] py-2 rounded px-6 bg-opacity-80 mt-2">
-              {carouselData[index].subtitle}
-            </p>
-          </div>
+      {/* Dark overlay (always on top of image, fades together) */}
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
-          {/* Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 bg-[#560015] bg-opacity-80 transform -translate-y-1/2 text-white p-2 rounded-full z-30"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 bg-[#560015] bg-opacity-80 transform -translate-y-1/2 text-white p-2 rounded-full z-30"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-        </div>
+      {/* Text content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+        <h2 className="text-md md:text-2xl font-bold">{item.title}</h2>
+        <p className="text-2xl md:text-5xl font-bold text-white bg-[#560015] py-2 rounded px-6 bg-opacity-80 mt-2">
+          {item.subtitle}
+        </p>
+      </div>
+    </div>
+  ))}
+
+  {/* Arrows */}
+  <button
+    onClick={prevSlide}
+    className="absolute left-4 top-1/2 bg-[#560015] bg-opacity-80 transform -translate-y-1/2 text-white p-2 rounded-full z-30"
+  >
+    <ChevronLeft className="h-6 w-6" />
+  </button>
+  <button
+    onClick={nextSlide}
+    className="absolute right-4 top-1/2 bg-[#560015] bg-opacity-80 transform -translate-y-1/2 text-white p-2 rounded-full z-30"
+  >
+    <ChevronRight className="h-6 w-6" />
+  </button>
+</div>
+
+
       </section>
 
       {/* Value Cards */}

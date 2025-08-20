@@ -35,7 +35,7 @@ import { logout } from "@/lib/auth"
 interface AdminDashboardProps {
   user: {
     id: number
-    pin: string
+    userId: string
     full_name: string
     email?: string
     role: string
@@ -48,19 +48,19 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
 
   // Mock data states
   const [staffList, setStaffList] = useState([
-    { id: 1, name: "John Teacher", pin: "STF001", email: "john@fidif.edu", role: "Teacher", class: "Class 1A" },
-    { id: 2, name: "Jane Instructor", pin: "STF002", email: "jane@fidif.edu", role: "Teacher", class: "Class 2B" },
-    { id: 3, name: "Michael Brown", pin: "STF003", email: "michael@fidif.edu", role: "Teacher", class: "" },
-    { id: 4, name: "Sarah Davis", pin: "STF004", email: "sarah@fidif.edu", role: "Teacher", class: "" },
-    { id: 5, name: "Robert Wilson", pin: "STF005", email: "robert@fidif.edu", role: "Teacher", class: "" },
-    { id: 6, name: "Emily Johnson", pin: "STF006", email: "emily@fidif.edu", role: "Teacher", class: "" },
-    { id: 7, name: "David Martinez", pin: "STF007", email: "david@fidif.edu", role: "Admin", class: "" },
-    { id: 8, name: "Lisa Anderson", pin: "STF008", email: "lisa@fidif.edu", role: "Staff", class: "" },
+    { id: 1, name: "John Teacher", userId: "STF001", email: "john@fidif.edu", role: "Teacher", class: "Class 1A" },
+    { id: 2, name: "Jane Instructor", userId: "STF002", email: "jane@fidif.edu", role: "Teacher", class: "Class 2B" },
+    { id: 3, name: "Michael Brown", userId: "STF003", email: "michael@fidif.edu", role: "Teacher", class: "" },
+    { id: 4, name: "Sarah Davis", userId: "STF004", email: "sarah@fidif.edu", role: "Teacher", class: "" },
+    { id: 5, name: "Robert Wilson", userId: "STF005", email: "robert@fidif.edu", role: "Teacher", class: "" },
+    { id: 6, name: "Emily Johnson", userId: "STF006", email: "emily@fidif.edu", role: "Teacher", class: "" },
+    { id: 7, name: "David Martinez", userId: "STF007", email: "david@fidif.edu", role: "Admin", class: "" },
+    { id: 8, name: "Lisa Anderson", userId: "STF008", email: "lisa@fidif.edu", role: "Staff", class: "" },
   ])
 
   const [studentList, setStudentList] = useState([
-    { id: 1, name: "Alice Student", pin: "STU001", email: "alice@student.fidif.edu", class: "Class 1A", grade: "A" },
-    { id: 2, name: "Bob Learner", pin: "STU002", email: "bob@student.fidif.edu", class: "Class 2B", grade: "B+" },
+    { id: 1, name: "Alice Student", userId: "STU001", email: "alice@student.fidif.edu", class: "Class 1A", grade: "A" },
+    { id: 2, name: "Bob Learner", userId: "STU002", email: "bob@student.fidif.edu", class: "Class 2B", grade: "B+" },
   ])
 
   const [classList, setClassList] = useState([
@@ -109,7 +109,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     window.location.href = "/login"
   }
 
-  const generatePin = (type: "staff" | "student") => {
+  const generateUserId = (type: "staff" | "student") => {
     const prefix = type === "staff" ? "STF" : "STU"
     const number = Math.floor(Math.random() * 1000)
       .toString()
@@ -118,33 +118,33 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
   }
 
   const handleAddStaff = () => {
-    const pin = generatePin("staff")
+    const userId = generateUserId("staff")
     const staff = {
       id: staffList.length + 1,
       name: newStaff.name,
-      pin,
+      userId,
       email: newStaff.email,
       role: newStaff.role,
       class: newStaff.class,
     }
     setStaffList([...staffList, staff])
     setNewStaff({ name: "", email: "", role: "Teacher", class: "" })
-    alert(`Staff added successfully! PIN: ${pin}`)
+    alert(`Staff added successfully! User ID: ${userId}`)
   }
 
   const handleAddStudent = () => {
-    const pin = generatePin("student")
+    const userId = generateUserId("student")
     const student = {
       id: studentList.length + 1,
       name: newStudent.name,
-      pin,
+      userId,
       email: newStudent.email,
       class: newStudent.class,
       grade: "N/A",
     }
     setStudentList([...studentList, student])
     setNewStudent({ name: "", email: "", class: "", parentContact: "" })
-    alert(`Student added successfully! PIN: ${pin}`)
+    alert(`Student added successfully! User ID: ${userId}`)
   }
 
   const handleAddClass = () => {
@@ -239,7 +239,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Directory</SidebarGroupLabel>
+            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -505,7 +505,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search staff by name, PIN, or role..."
+                  placeholder="Search staff by name, User ID, or role..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 max-w-sm border-pink-200 focus:border-pink-500"
@@ -518,7 +518,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                 .filter(
                   (staff) =>
                     staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    staff.pin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    staff.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     staff.role.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((staff) => (
@@ -526,7 +526,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                     <CardHeader>
                       <CardTitle className="text-pink-900">{staff.name}</CardTitle>
                       <CardDescription>
-                        {staff.role} • PIN: {staff.pin}
+                        {staff.role} • User ID: {staff.userId}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -573,7 +573,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search students by name, PIN, or class..."
+                  placeholder="Search students by name, User ID, or class..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 max-w-sm border-pink-200 focus:border-pink-500"
@@ -586,7 +586,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                 .filter(
                   (student) =>
                     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    student.pin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    student.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     student.class.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((student) => (
@@ -594,7 +594,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                     <CardHeader>
                       <CardTitle className="text-pink-900">{student.name}</CardTitle>
                       <CardDescription>
-                        {student.class} • PIN: {student.pin}
+                        {student.class} • User ID: {student.userId}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
