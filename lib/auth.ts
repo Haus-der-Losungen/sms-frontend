@@ -5,8 +5,9 @@ import { SignJWT, jwtVerify } from "jose"
 import { redirect } from "next/navigation"
 
 const secret = new TextEncoder().encode("your-secret-key-for-demo")
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
 
-// Mock user data (replace with database in production)
+// Mock user data (fallback if API is not available)
 const mockUsers = [
   {
     id: 1,
@@ -44,6 +45,59 @@ const mockUsers = [
 
 export async function login(pin: string, password: string, role: string) {
   try {
+    // Try to authenticate with backend API first
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pin,
+          password,
+          role,
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        
+        // Get user info from the backend
+        const userResponse = await fetch(`${API_BASE_URL}/user/me`, {
+          headers: {
+            "Cookie": response.headers.get("set-cookie") || "",
+          },
+        })
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+          
+          // Set cookie with the access token from backend
+          const cookieStore = await cookies()
+          cookieStore.set("auth-token", data.access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24,
+          })
+
+          return {
+            success: true,
+            user: {
+              id: userData.user_id,
+              pin: pin,
+              full_name: userData.profile.full_name,
+              email: userData.profile.email,
+              role: userData.role,
+            },
+          }
+        }
+      }
+    } catch (apiError) {
+      console.warn("API login failed, falling back to mock:", apiError)
+    }
+
+    // Fallback to mock authentication
     const user = mockUsers.find(
       (u) => u.pin === pin && u.password === password && u.role === role
     )
