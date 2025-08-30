@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dialog"
 import { Users, GraduationCap, BookOpen, BarChart3, LogOut, Plus, Search, Edit } from "lucide-react"
 import { logout } from "@/lib/auth"
+import { apiClient } from "@/lib/api"
 
 interface AdminDashboardProps {
   user: {
@@ -45,33 +46,61 @@ interface AdminDashboardProps {
 export function AdminDashboard({ user }: AdminDashboardProps) {
   const [activeView, setActiveView] = useState("overview")
   const [searchTerm, setSearchTerm] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  // Mock data states
-  const [staffList, setStaffList] = useState([
-    { id: 1, name: "John Teacher", userId: "STF001", email: "john@fidif.edu", role: "Teacher", class: "Class 1A" },
-    { id: 2, name: "Jane Instructor", userId: "STF002", email: "jane@fidif.edu", role: "Teacher", class: "Class 2B" },
-    { id: 3, name: "Michael Brown", userId: "STF003", email: "michael@fidif.edu", role: "Teacher", class: "" },
-    { id: 4, name: "Sarah Davis", userId: "STF004", email: "sarah@fidif.edu", role: "Teacher", class: "" },
-    { id: 5, name: "Robert Wilson", userId: "STF005", email: "robert@fidif.edu", role: "Teacher", class: "" },
-    { id: 6, name: "Emily Johnson", userId: "STF006", email: "emily@fidif.edu", role: "Teacher", class: "" },
-    { id: 7, name: "David Martinez", userId: "STF007", email: "david@fidif.edu", role: "Admin", class: "" },
-    { id: 8, name: "Lisa Anderson", userId: "STF008", email: "lisa@fidif.edu", role: "Staff", class: "" },
-  ])
+  // Data states
+  const [staffList, setStaffList] = useState<any[]>([])
+  const [studentList, setStudentList] = useState<any[]>([])
+  const [classList, setClassList] = useState<any[]>([])
+  const [subjectList, setSubjectList] = useState<any[]>([])
 
-  const [studentList, setStudentList] = useState([
-    { id: 1, name: "Alice Student", userId: "STU001", email: "alice@student.fidif.edu", class: "Class 1A", grade: "A" },
-    { id: 2, name: "Bob Learner", userId: "STU002", email: "bob@student.fidif.edu", class: "Class 2B", grade: "B+" },
-  ])
+  // Load data on component mount
+  useEffect(() => {
+    loadData()
+  }, [])
 
-  const [classList, setClassList] = useState([
-    { id: 1, name: "Class 1A", teacher: "John Teacher", students: 25, description: "Primary class for grade 1" },
-    { id: 2, name: "Class 2B", teacher: "Jane Instructor", students: 23, description: "Primary class for grade 2" },
-  ])
+  const loadData = async () => {
+    setLoading(true)
+    setError("")
+    try {
+      // Load all data in parallel
+      const [staff, students, classes, subjects] = await Promise.all([
+        apiClient.getStaff().catch(() => []),
+        apiClient.getStudents().catch(() => []),
+        apiClient.getClasses().catch(() => []),
+        apiClient.getSubjects().catch(() => [])
+      ])
 
-  const [subjectList, setSubjectList] = useState([
-    { id: 1, name: "Mathematics", description: "Basic arithmetic and problem solving", teacher: "John Teacher" },
-    { id: 2, name: "English", description: "Reading, writing, and communication", teacher: "Jane Instructor" },
-  ])
+      setStaffList(staff)
+      setStudentList(students)
+      setClassList(classes)
+      setSubjectList(subjects)
+    } catch (err) {
+      setError("Failed to load data. Using mock data for demonstration.")
+      console.error("Error loading data:", err)
+      
+      // Fallback to mock data
+      setStaffList([
+        { user: { user_id: "1", role: "staff" }, profile: { first_name: "John", last_name: "Teacher", email: "john@fidif.edu" } },
+        { user: { user_id: "2", role: "staff" }, profile: { first_name: "Jane", last_name: "Instructor", email: "jane@fidif.edu" } },
+      ])
+      setStudentList([
+        { user: { user_id: "3", role: "student" }, profile: { first_name: "Alice", last_name: "Student", email: "alice@fidif.edu" } },
+        { user: { user_id: "4", role: "student" }, profile: { first_name: "Bob", last_name: "Learner", email: "bob@fidif.edu" } },
+      ])
+      setClassList([
+        { class_id: "1", name: "Class 1A", description: "Primary class for grade 1" },
+        { class_id: "2", name: "Class 2B", description: "Primary class for grade 2" },
+      ])
+      setSubjectList([
+        { subject_id: "1", name: "Mathematics", description: "Basic arithmetic and problem solving" },
+        { subject_id: "2", name: "English", description: "Reading, writing, and communication" },
+      ])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Form states
   const [newStaff, setNewStaff] = useState({
@@ -117,59 +146,119 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     return `${prefix}${number}`
   }
 
-  const handleAddStaff = () => {
-    const userId = generateUserId("staff")
-    const staff = {
-      id: staffList.length + 1,
-      name: newStaff.name,
-      userId,
-      email: newStaff.email,
-      role: newStaff.role,
-      class: newStaff.class,
+  const handleAddStaff = async () => {
+    try {
+      setLoading(true)
+      const [firstName, ...lastNameParts] = newStaff.name.split(" ")
+      const lastName = lastNameParts.join(" ") || ""
+      
+      const staffData = {
+        user: {
+          role: "staff"
+        },
+        profile: {
+          first_name: firstName,
+          last_name: lastName,
+          email: newStaff.email,
+          phone: "0240000000",
+          gender: "male",
+          date_of_birth: "1990-01-01",
+          photo: "https://example.com/photo.jpg",
+          marital_status: "single",
+          emergency_contact: "0240000001"
+        }
+      }
+
+      await apiClient.createStaff(staffData)
+      setNewStaff({ name: "", email: "", role: "Teacher", class: "" })
+      alert("Staff added successfully!")
+      loadData() // Reload data
+    } catch (error) {
+      console.error("Error adding staff:", error)
+      alert("Failed to add staff. Please try again.")
+    } finally {
+      setLoading(false)
     }
-    setStaffList([...staffList, staff])
-    setNewStaff({ name: "", email: "", role: "Teacher", class: "" })
-    alert(`Staff added successfully! User ID: ${userId}`)
   }
 
-  const handleAddStudent = () => {
-    const userId = generateUserId("student")
-    const student = {
-      id: studentList.length + 1,
-      name: newStudent.name,
-      userId,
-      email: newStudent.email,
-      class: newStudent.class,
-      grade: "N/A",
+  const handleAddStudent = async () => {
+    try {
+      setLoading(true)
+      const [firstName, ...lastNameParts] = newStudent.name.split(" ")
+      const lastName = lastNameParts.join(" ") || ""
+      
+      const studentData = {
+        user: {
+          role: "student"
+        },
+        profile: {
+          first_name: firstName,
+          last_name: lastName,
+          email: newStudent.email,
+          phone: "0240000000",
+          gender: "male",
+          date_of_birth: "2010-01-01",
+          photo: "https://example.com/photo.jpg",
+          marital_status: "single",
+          emergency_contact: newStudent.parentContact || "0240000001"
+        }
+      }
+
+      await apiClient.createStudent(studentData)
+      setNewStudent({ name: "", email: "", class: "", parentContact: "" })
+      alert("Student added successfully!")
+      loadData() // Reload data
+    } catch (error) {
+      console.error("Error adding student:", error)
+      alert("Failed to add student. Please try again.")
+    } finally {
+      setLoading(false)
     }
-    setStudentList([...studentList, student])
-    setNewStudent({ name: "", email: "", class: "", parentContact: "" })
-    alert(`Student added successfully! User ID: ${userId}`)
   }
 
-  const handleAddClass = () => {
-    const newClassItem = {
-      id: classList.length + 1,
-      name: newClass.name,
-      teacher: newClass.teacher,
-      students: 0,
-      description: newClass.description,
+  const handleAddClass = async () => {
+    try {
+      setLoading(true)
+      const classData = {
+        name: newClass.name,
+        description: newClass.description,
+        grade_level: "Grade 1",
+        max_students: 30
+      }
+
+      await apiClient.createClass(classData)
+      setNewClass({ name: "", teacher: "", description: "" })
+      alert("Class added successfully!")
+      loadData() // Reload data
+    } catch (error) {
+      console.error("Error adding class:", error)
+      alert("Failed to add class. Please try again.")
+    } finally {
+      setLoading(false)
     }
-    setClassList([...classList, newClassItem])
-    setNewClass({ name: "", teacher: "", description: "" })
-    alert("Class added successfully!")
   }
 
-  const handleAddSubject = () => {
-    const newSubjectItem = {
-      id: subjectList.length + 1,
-      name: newSubject.name,
-      description: newSubject.description,
-      teacher: newSubject.teacher,
+  const handleAddSubject = async () => {
+    try {
+      setLoading(true)
+      const subjectData = {
+        name: newSubject.name,
+        description: newSubject.description,
+        code: newSubject.name.toUpperCase().substring(0, 6),
+        class_id: classList[0]?.class_id || "1", // Use first available class
+        credits: 3
+      }
+
+      await apiClient.createSubject(subjectData)
+      setNewSubject({ name: "", description: "", teacher: "" })
+      alert("Subject added successfully!")
+      loadData() // Reload data
+    } catch (error) {
+      console.error("Error adding subject:", error)
+      alert("Failed to add subject. Please try again.")
+    } finally {
+      setLoading(false)
     }
-    setSubjectList([...subjectList, newSubjectItem])
-    setNewSubject({ name: "", description: "", teacher: "" })
-    alert("Subject added successfully!")
   }
 
   const handleEditClass = (cls: any) => {
@@ -517,28 +606,28 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
               {staffList
                 .filter(
                   (staff) =>
-                    staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    staff.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    staff.role.toLowerCase().includes(searchTerm.toLowerCase()),
+                    staff.profile?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    staff.user?.user_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    staff.user?.role?.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((staff) => (
-                  <Card key={staff.id} className="border-pink-200">
+                  <Card key={staff.user?.user_id} className="border-pink-200">
                     <CardHeader>
-                      <CardTitle className="text-pink-900">{staff.name}</CardTitle>
+                      <CardTitle className="text-pink-900">{staff.profile?.full_name || "Unknown"}</CardTitle>
                       <CardDescription>
-                        {staff.role} • User ID: {staff.userId}
+                        {staff.user?.role} • User ID: {staff.user?.user_id}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 text-sm">
                         <p>
-                          <strong>Email:</strong> {staff.email}
+                          <strong>Email:</strong> {staff.profile?.email || "Not provided"}
                         </p>
                         <p>
-                          <strong>Role:</strong> {staff.role}
+                          <strong>Role:</strong> {staff.user?.role}
                         </p>
                         <p>
-                          <strong>Class:</strong> {staff.class || "Not assigned"}
+                          <strong>Phone:</strong> {staff.profile?.phone || "Not provided"}
                         </p>
                       </div>
                       <Button
@@ -585,28 +674,28 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
               {studentList
                 .filter(
                   (student) =>
-                    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    student.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    student.class.toLowerCase().includes(searchTerm.toLowerCase()),
+                    student.profile?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    student.user?.user_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    "student".toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((student) => (
-                  <Card key={student.id} className="border-pink-200">
+                  <Card key={student.user?.user_id} className="border-pink-200">
                     <CardHeader>
-                      <CardTitle className="text-pink-900">{student.name}</CardTitle>
+                      <CardTitle className="text-pink-900">{student.profile?.full_name || "Unknown"}</CardTitle>
                       <CardDescription>
-                        {student.class} • User ID: {student.userId}
+                        Student • User ID: {student.user?.user_id}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 text-sm">
                         <p>
-                          <strong>Email:</strong> {student.email}
+                          <strong>Email:</strong> {student.profile?.email || "Not provided"}
                         </p>
                         <p>
-                          <strong>Class:</strong> {student.class}
+                          <strong>Role:</strong> {student.user?.role}
                         </p>
                         <p>
-                          <strong>Grade:</strong> {student.grade}
+                          <strong>Phone:</strong> {student.profile?.phone || "Not provided"}
                         </p>
                       </div>
                       <Button
@@ -694,15 +783,15 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {classList.map((cls) => (
-                <Card key={cls.id} className="border-pink-200">
+                <Card key={cls.class_id} className="border-pink-200">
                   <CardHeader>
                     <CardTitle className="text-pink-900">{cls.name}</CardTitle>
-                    <CardDescription>Teacher: {cls.teacher}</CardDescription>
+                    <CardDescription>Grade: {cls.grade_level}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2 text-sm">
                       <p>
-                        <strong>Students:</strong> {cls.students}
+                        <strong>Max Students:</strong> {cls.max_students}
                       </p>
                       <p>
                         <strong>Description:</strong> {cls.description}
@@ -722,7 +811,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Edit Class</DialogTitle>
-                          <DialogDescription>Update class information and reassign teacher</DialogDescription>
+                          <DialogDescription>Update class information</DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
@@ -733,26 +822,6 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                               onChange={(e) => setNewClass({ ...newClass, name: e.target.value })}
                               className="border-pink-200 focus:border-pink-500"
                             />
-                          </div>
-                          <div>
-                            <Label htmlFor="edit-class-teacher">Assigned Teacher</Label>
-                            <Select
-                              value={newClass.teacher}
-                              onValueChange={(value) => setNewClass({ ...newClass, teacher: value })}
-                            >
-                              <SelectTrigger className="border-pink-200 focus:border-pink-500">
-                                <SelectValue placeholder="Select a teacher" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {staffList
-                                  .filter((staff) => staff.role === "Teacher")
-                                  .map((teacher) => (
-                                    <SelectItem key={teacher.id} value={teacher.name}>
-                                      {teacher.name}
-                                    </SelectItem>
-                                  ))}
-                              </SelectContent>
-                            </Select>
                           </div>
                           <div>
                             <Label htmlFor="edit-class-description">Description</Label>
@@ -850,15 +919,18 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {subjectList.map((subject) => (
-                <Card key={subject.id} className="border-pink-200">
+                <Card key={subject.subject_id} className="border-pink-200">
                   <CardHeader>
                     <CardTitle className="text-pink-900">{subject.name}</CardTitle>
-                    <CardDescription>Teacher: {subject.teacher}</CardDescription>
+                    <CardDescription>Code: {subject.code}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2 text-sm">
                       <p>
                         <strong>Description:</strong> {subject.description}
+                      </p>
+                      <p>
+                        <strong>Credits:</strong> {subject.credits}
                       </p>
                     </div>
                     <Dialog>
@@ -875,7 +947,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Edit Subject</DialogTitle>
-                          <DialogDescription>Update subject information and reassign teacher</DialogDescription>
+                          <DialogDescription>Update subject information</DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
@@ -886,26 +958,6 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                               onChange={(e) => setNewSubject({ ...newSubject, name: e.target.value })}
                               className="border-pink-200 focus:border-pink-500"
                             />
-                          </div>
-                          <div>
-                            <Label htmlFor="edit-subject-teacher">Assigned Teacher</Label>
-                            <Select
-                              value={newSubject.teacher}
-                              onValueChange={(value) => setNewSubject({ ...newSubject, teacher: value })}
-                            >
-                              <SelectTrigger className="border-pink-200 focus:border-pink-500">
-                                <SelectValue placeholder="Select a teacher" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {staffList
-                                  .filter((staff) => staff.role === "Teacher")
-                                  .map((teacher) => (
-                                    <SelectItem key={teacher.id} value={teacher.name}>
-                                      {teacher.name}
-                                    </SelectItem>
-                                  ))}
-                              </SelectContent>
-                            </Select>
                           </div>
                           <div>
                             <Label htmlFor="edit-subject-description">Description</Label>
@@ -949,7 +1001,19 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
               <h1 className="text-xl font-semibold text-pink-900">Fidif School Complex</h1>
             </div>
           </header>
-          <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+          <main className="flex-1 p-6 overflow-auto">
+            {loading && (
+              <div className="flex items-center justify-center p-8">
+                <div className="text-pink-600">Loading...</div>
+              </div>
+            )}
+            {error && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <p className="text-yellow-800">{error}</p>
+              </div>
+            )}
+            {!loading && renderContent()}
+          </main>
         </div>
       </div>
     </SidebarProvider>
